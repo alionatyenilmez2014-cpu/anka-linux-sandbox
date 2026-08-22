@@ -19,9 +19,9 @@ jobs:
       - name: Calisma alani geri yukle
         uses: actions/cache/restore@v4
         with:
-          key: ws-${{ inputs.sid }}-v1
-          restore-keys: ws-${{ inputs.sid }}-v1
-          path: /home/anka
+          key: ws-${{ inputs.sid }}-v2
+          restore-keys: ws-${{ inputs.sid }}-v2
+          path: /home/runner/anka-ws
 
       - name: ANKA-Linux
         env:
@@ -29,11 +29,10 @@ jobs:
           SID: ${{ inputs.sid }}
         shell: bash
         run: |
-          WS="/home/anka/$SID"
+          WS="$HOME/anka-ws/$SID"
           mkdir -p "$WS"
           cd "$WS"
-          echo "[ANKA] calisma alani: $WS"
-          ls -la
+          echo "[ANKA] oturum=$SID calisma-alani=$WS"
           printf '%s' "$CMD" > /tmp/anka.sh
           bash /tmp/anka.sh 2>&1
 
@@ -41,5 +40,5 @@ jobs:
         if: always()
         uses: actions/cache/save@v4
         with:
-          key: ws-${{ inputs.sid }}-v1-${{ github.run_id }}
-          path: /home/anka
+          key: ws-${{ inputs.sid }}-v2-${{ github.run_id }}
+          path: /home/runner/anka-ws
