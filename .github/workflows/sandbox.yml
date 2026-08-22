@@ -5,6 +5,10 @@ on:
       cmd:
         description: Bash komutu
         required: true
+      sid:
+        description: Oturum kimligi
+        required: false
+        default: default
 permissions:
   contents: read
 jobs:
@@ -12,10 +16,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Calisma alani geri yukle
+        uses: actions/cache/restore@v4
+        with:
+          key: ws-${{ inputs.sid }}-v1
+          restore-keys: ws-${{ inputs.sid }}-v1
+          path: /home/anka
+
       - name: ANKA-Linux
         env:
           CMD: ${{ inputs.cmd }}
+          SID: ${{ inputs.sid }}
         shell: bash
         run: |
+          WS="/home/anka/$SID"
+          mkdir -p "$WS"
+          cd "$WS"
+          echo "[ANKA] calisma alani: $WS"
+          ls -la
           printf '%s' "$CMD" > /tmp/anka.sh
           bash /tmp/anka.sh 2>&1
+
+      - name: Calisma alani kaydet
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          key: ws-${{ inputs.sid }}-v1-${{ github.run_id }}
+          path: /home/anka
