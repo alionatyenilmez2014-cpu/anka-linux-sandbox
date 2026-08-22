@@ -1,0 +1,21 @@
+name: anka-sandbox
+on:
+  workflow_dispatch:
+    inputs:
+      cmd:
+        description: Bash komutu
+        required: true
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: ANKA-Linux
+        env:
+          CMD: ${{ inputs.cmd }}
+        shell: bash
+        run: |
+          printf '%s' "$CMD" > /tmp/anka.sh
+          bash /tmp/anka.sh 2>&1
